@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.User;
-import com.example.demo.mapper.UserMapper;
+import com.example.demo.dao.UserMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 //创建测试的快捷键 shift+ctrl+t
 @ExtendWith(MockitoExtension.class)

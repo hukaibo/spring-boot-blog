@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.LoginResult;
 import com.example.demo.entity.User;
 import com.example.demo.entity.result;
 import com.example.demo.service.UserService;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -40,47 +43,47 @@ public class AuthController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User loguer = userService.getUserByUsername(authentication==null?null:authentication.getName());
         if (loguer == null) {
-            return result.failMethod("用户不存在");
+            return LoginResult.failMethod("用户不存在");
 
         } else {
-            return result.successMethod2("",loguer);
+            return LoginResult.successMethod2("",loguer);
 
         }
     }
 
     @PostMapping("/auth/register")
     @ResponseBody
-    public result register(@RequestBody Map<String, String> usernameAndpassword) {
+    public LoginResult register(@RequestBody Map<String, String> usernameAndpassword) {
         String username = usernameAndpassword.get("username");
         String password = usernameAndpassword.get("password");
         if (username.length() < 1 || username.length() > 15) {
-            return result.failMethod("用户名不符合");
+            return LoginResult.failMethod("用户名不符合");
         }
         if (password.length() < 6 || password.length() > 16) {
-            return result.failMethod("密码不符合");
+            return LoginResult.failMethod("密码不符合");
         }
         try {
             userService.save(username, password);
 
         }catch (Exception e){
             e.printStackTrace();
-            return result.failMethod("user already exists");
+            return LoginResult.failMethod("user already exists");
         }
-        return result.successMethod("success!");
+        return LoginResult.successMethod("success!");
 
     }
 
     @GetMapping("/auth/logout")
     @ResponseBody
-    public result logout() {
+    public LoginResult logout() {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userService.getUserByUsername(name);
         if (user == null) {
-            return result.failMethod("用户没登录");
+            return LoginResult.failMethod("用户没登录");
         } else {
             SecurityContextHolder.clearContext();
-            return result.successMethod("注销成功");
+            return LoginResult.successMethod("注销成功");
 
         }
     }
@@ -92,6 +95,7 @@ public class AuthController {
     }
 
     private static class A {
+    List<User> users=new ArrayList<>();
 
         public String getHukaibo() {
             return "hukaibo";
@@ -100,11 +104,17 @@ public class AuthController {
         public String get胡凯杨() {
             return "hukaiyang";
         }
+        public Object getData(){
+            users.add(new User(1,"a","a"));
+            users.add(new User(2,"b","b"));
+
+            return users;
+        }
     }
 
     @PostMapping(value = "/auth/login",produces = "application/json;charset=utf-8")
     @ResponseBody
-    public result login(
+    public LoginResult login(
             @RequestBody Map<String, String> usernameAndpassword
 
     ) {
@@ -114,15 +124,15 @@ public class AuthController {
         try {
             userDetails = userService.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            return result.failMethod("用户不存在");
+            return LoginResult.failMethod("用户不存在");
         }
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         try {
             authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(token);
-            return result.successMethod2("登录成功",userService.getUserByUsername(username));
+            return LoginResult.successMethod2("登录成功",userService.getUserByUsername(username));
         } catch (BadCredentialsException e) {
-            return result.failMethod("密码不正确");
+            return LoginResult.failMethod("密码不正确");
         }
     }
 

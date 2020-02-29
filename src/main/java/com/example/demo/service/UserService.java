@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.User;
-import com.example.demo.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.dao.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -49,5 +46,9 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException(username + "不存在");
         }
         return new org.springframework.security.core.userdetails.User(username, user.getEncryptedPassword(), Collections.emptyList());
+    }
+
+    public User getUserById(Integer userId) {
+        return this.userMapper.getUserById(userId);
     }
 }
